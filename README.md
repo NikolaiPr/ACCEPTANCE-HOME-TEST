@@ -1,4 +1,4 @@
-# PROEKSPERT-HOME-TEST
+# ACCEPTANCE HOME-TEST
 C++ DEVELOPER HOME TEST ASSIGNMENT 
 
 Project progress & work discussions
