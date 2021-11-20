@@ -6,7 +6,7 @@
 #include <unordered_set>
 #include <algorithm>
 
-// Custom functors for std::unordered_map<char*, >
+// Custom functors for std::unordered_map<char*, unsigned int>
 // Comparator functor.
 template <class _Tp, unsigned int N>  
 struct my_equal_to 
@@ -35,53 +35,37 @@ struct my_HashChar {
 // N-gram(N-len substring) container
 // stores all grams in container(map or hash table)
 // gram length limited 5 because of memory limitation
-template<unsigned int N>
+
+template< unsigned int N>
 class TGramConteiner
 {
-	static_assert(N < 5, "N must be less than 5");
+	static_assert(N < 6, "N must be less than 6");
 	using gram_cont = std::unordered_map<char*, unsigned int, my_HashChar<char*, N>,  my_equal_to<char*, N> >;
 	
-public:
-
+protected:
 	gram_cont m_grams;
-	
+
+public:
+	~TGramConteiner(){ 
+		for(auto gr : m_grams)
+			delete []gr.first;
+	}
+
+	const gram_cont& getgrams(){
+		return m_grams;
+	}
+
 	// add new gram in conteiner
-	void addgram(char* gram){
+	void addgram(char* gr){
+		auto gram = new char[N];
+		memcpy(gram, gr, sizeof(char)*N);
+		
 		auto itr = m_grams.find(gram);
 		if(itr == m_grams.end())
 			m_grams[gram] = 1;
 		else
 			m_grams[gram]++;
 	};
-
-	//remove gram from conteiner
-	void removegram(char* gram){
-		auto itr = m_grams.find(gram);
-		if(itr != m_grams.end())
-			m_grams.erase(itr);
-	}
-
-	//clear conteiner from less frequently appearing grams
-	//void clearunfreqgram(int min_freq){
-	//	for(auto gram_itr = m_grams.begin(); gram_itr != m_grams.end(); ){
-	//		if(gram_itr->second < min_freq)
-	//			gram_itr = m_grams.erase(gram_itr);
-	//		else ++gram_itr;
-	//	}
-	//}
-
-	// looking for most frequently appearing gram
-	const char*get_most_freq_gram(){
-		auto gram_pos = m_grams.begin();
-		int maxfreq = gram_pos->second;
-		
-		for(auto gram_itr = m_grams.begin(); gram_itr != m_grams.end(); ++gram_itr){
-			if(gram.second > maxfreq){
-				gram_pos = gram_itr;
-				maxfreq = gram.second;
-			}
-		}
-	}
 
 	// create sorted gram freq table
 	void get_sorted_table(std::unordered_map<unsigned int, std::vector<char*>> &sorted, std::vector<unsigned int> &keys){
@@ -97,5 +81,38 @@ public:
 
 		// sort with descending order.
     	std::sort(keys.begin(), keys.end(), [&](unsigned int &a, unsigned int &b) { return a > b; });
+	}
+
+	bool ParseGram(std::string &path)
+	{
+		std::FILE* pFile = std::fopen(path.c_str(), "r");
+		if(!pFile)
+			return false;
+
+		char gr[N];
+		for(int i=0; i<N; i++)
+			gr[i] = ' ';
+		int c;
+
+		while ( (c = getc (pFile)) != EOF){
+
+			memcpy(gr, &gr[1], sizeof(char)*(N-1));
+			gr[N-1] = (char)c; 
+
+			// skip spaces
+			bool bSpace = false;
+			for(int i=0; i<N; i++)
+				if(gr[i] == ' ' || gr[i] == '\n'){
+					bSpace = true;
+					continue;
+				}
+			if(bSpace)
+				continue;
+
+			addgram(gr);
+		};
+
+		std::fclose(pFile);
+		return true;
 	}
 };
