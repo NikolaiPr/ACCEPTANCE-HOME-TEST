@@ -1,18 +1,15 @@
+#include <stdio.h>
 #include <iostream>
 #include <string>
 #include <memory>
 #include "..\..\core\includes\core.h"
 
-#define N_GRAM 3
-//#define MIN_FREQ 3
-#define CHART_SIZE 10
+using namespace alg;
+
 
 //print single gram
 //total > 0 - add chart
-void print_gram(char *gram, unsigned int freq, unsigned int total = 0){
-	char str[N_GRAM+1];
-	memcpy(&str, gram, sizeof(char)*N_GRAM);
-	str[N_GRAM] = '\0';
+void print_gram(std::string &str, int freq, int total = 0){
 	if(total == 0)
 		std::cout << str << " = "<< freq << std::endl;
 	else
@@ -20,78 +17,54 @@ void print_gram(char *gram, unsigned int freq, unsigned int total = 0){
 }
 
 //print all grams with their inclusion frequency
-template<typename TGram>
-void print_grams(TGram &grams){
-	for(auto &gram : grams.getgrams())
-		print_gram(gram.first, gram.second);
+//template<typename TGram>
+//void print_grams(TGram &grams){
+//	for(auto &gram : grams.getgrams())
+//		print_gram(gram.first, gram.second);
+//}
+
+//template<>
+std::string GetCombinationString(const std::vector<char> &comb)
+{
+	std::string str(comb.data(), comb.size());
+	return std::move(str);
 }
 
 //print grams with their inclusion frequency in descending order
 // count == 0 - print all
-template<typename gr_type>
-void print_sorted_grams(std::unordered_map<unsigned int, std::vector<gr_type>> &table, 
-						std::vector<unsigned int> &keys, unsigned int count = 0){
-	int num = (count > 0) ? count : table.size();
-	if(count > table.size())
-		count = table.size();
-
-	if(keys.size() == 0)
+void print_chart(std::shared_ptr<CCharChart> pChart){
+	if (pChart.get() == nullptr || pChart->IsEmpty())
 		return;
 
-	int ikey = 0;
-	int total = 0;
+	auto total = pChart->GetTotal();
 
-	for(int i=0; i<num; ){
-		auto key = keys[ikey++];
-		for(auto &gram : table[key]){
-			total += key;
-			if(++i >= num)
-				break;
-		}
-	}
-
-	ikey = 0;
-	for(int i=0; i<num; ){
-		auto key = keys[ikey++];
-		for(auto &gram : table[key]){
-			print_gram(gram, key, total);
-			if(++i >= num)
-				break;
-		}
-	}
+	for(auto &gr : pChart->GetChart())
+		print_gram(GetCombinationString(gr.m_comb), gr.m_freq, total);
 }
 
 
 int main(int argc, char **file_arg)
 {
-	std::string file = "L:\\PROEKSPERT-HOME-TEST\\core_test\\test_files\\console.pdb";
-	if(argc > 1){
-		file.clear();
-		file.append(file_arg[1]);
-	}
-	std::cout << "open file:" << file << std::endl;
 
-	int chartSize = CHART_SIZE;
-	if(argc > 2)
-		chartSize = std::atoi(file_arg[2]);
-	std::cout << "chart length:" << chartSize << std::endl << std::endl;
+	CAlgorithm ChartProcessor(std::string("L:\\PROEKSPERT-HOME-TEST\\core_test\\test_files\\twoletters.txt"));
 
-	TGramConteiner<N_GRAM> grams;
+	if (argc > 1)
+		ChartProcessor.m_file = std::string(file_arg[1]);
+	if (argc > 2)
+		ChartProcessor.m_iChartLength = std::atoi(file_arg[3]);
+	if (argc > 3)
+		ChartProcessor.m_iCombinationLength = std::atoi(file_arg[3]);
 
-	if(!grams.ParseGram(file))
+	std::cout << "open file:" << ChartProcessor.m_file << std::endl;
+	std::cout << "chart length:" << ChartProcessor.m_iChartLength << std::endl << std::endl;
+	std::cout << "combination length:" << ChartProcessor.m_iCombinationLength << std::endl << std::endl;
+
+
+	if(ChartProcessor.Execute() != err_codes::no_err)
 		return -1;
 
-	std::cout << "all grams:" << std::endl;
-	print_grams(grams);
+	print_chart(ChartProcessor.m_pChart);
 
-	std::unordered_map<unsigned int, std::vector<char*>> sorted;
-	std::vector<unsigned int> keys;
-	grams.get_sorted_table(sorted, keys);
-
-	std::cout << std::endl;
-	std::cout << "top " << chartSize << " grams"<< std::endl;
-
-	print_sorted_grams(sorted, keys, chartSize);
 
 	return 0;
 }
