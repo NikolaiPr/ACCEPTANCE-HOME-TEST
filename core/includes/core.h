@@ -33,6 +33,44 @@ namespace alg{
 	};
 
 
+	// base algorithm class to separate working with templates
+	class CORE_EXPORT AAlgorithm
+	{
+	public:
+		std::string m_file;						///< file name
+		//int m_iCombinationLength;				///< minimal start combination length
+		int m_iChartLength;						///< chart length
+
+	public:
+		/// default constructor
+		AAlgorithm() : m_iChartLength(MAX_CHART_LEN)/*, m_iCombinationLength(4)*/ {};
+
+		/// explicit constructor
+		/// @param file full file path
+		/// @param iCombinationLength minimum combination start length
+		/// @param iChartLength	maximum chart length
+		AAlgorithm(std::string &file, int iCombinationLength = MIN_COMBINATION_LEN, int iChartLength = MAX_CHART_LEN)
+			: m_file(file), m_iChartLength(iChartLength)/*, m_iCombinationLength(iCombinationLength)*/{}
+
+		/// open file
+		/// @param bWrite write mode, else read mode
+		std::FILE* OpenFile(bool bWrite);
+
+		/// main algorithm function
+		/// @return error code 
+		/// @return no_err if all ok
+		/// @see err_codes
+		virtual err_codes Execute() = 0;
+
+		// print results into console
+		// suports only char type
+		virtual void PrintResults() = 0;
+
+		// save results into file
+		virtual err_codes SaveResults() = 0;
+	};
+
+
 
 	/// CAlgorithm class.
 	/// Uses any text file with random content as an input, and checks all the words contained 
@@ -40,17 +78,12 @@ namespace alg{
 	/// output will consist of up to 10 most common letter combinations and their difference 
 	/// in percentage displayed as a table and a bar chart
 
-	// @param T internal data type(tested type - char)
-	// TODO: type variants: wchar_t, char8_t, char16_t, char32_t
+	// @param T internal data type(tested type - char, wchat_t)
+	// TODO: type variants: char8_t, char16_t, char32_t
 
 	template<typename T>
-	class CAlgorithm
+	class CAlgorithm : public AAlgorithm
 	{
-	public:
-		std::string m_file;						///< file name
-		int m_iCombinationLength;				///< minimal start combination length
-		int m_iChartLength;						///< chart length
-	
 	protected:
 		std::shared_ptr<CChart<T>> m_pChart;	///< the chart
 
@@ -59,24 +92,40 @@ namespace alg{
 		CAlgorithm();
 
 		/// explicit constructor
+		/// @param file full file path
+		/// @param iCombinationLength minimum combination start length
+		/// @param iChartLength	maximum chart length
 		CAlgorithm(std::string &file, int iCombinationLength = MIN_COMBINATION_LEN, int iChartLength = MAX_CHART_LEN);
 
 		const std::shared_ptr<CChart<T>>& GetChart() { return m_pChart; };
 
 		/// main algorithm function
-		/// @return error code no_err
+		/// @return error code 
 		/// @return no_err if all ok
 		/// @see err_codes
-		err_codes Execute();
+		err_codes Execute() override;
+
+
+		// print results into console
+		// suports only char type
+		void PrintResults() override;
+
+		// save results into file
+		err_codes SaveResults() override;
 
 
 	protected:
+		/// finds expanded combinations in file
+		/// get combination from chart, searchs in file combination len+1, 
+		/// place back in chart most frequent combination
+		/// @param pFile the same already oppened file
 		void FindExpanded(std::FILE* pFile);
 	};
 
 
 
 	/// get file format
+	/// TODO: move func on cpp, fix problem with export
 	textfile_format GetFileFormat(std::string &file)
 	{
 		std::FILE* pFile = std::fopen(file.c_str(), "rb");
@@ -105,6 +154,3 @@ namespace alg{
 		return textfile_format::ascii_file;
 	}
 };
-
-
-

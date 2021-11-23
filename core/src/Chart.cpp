@@ -24,7 +24,7 @@ int CChart<T>::GetBottomFreq()
 template<typename T>
 bool CChart<T>::IsFull()
 {
-	return (m_chart.size() == m_iLength);
+	return (m_chart.size() >= m_iLength);
 }
 
 
@@ -49,6 +49,8 @@ bool CChart<T>::AddCombination(const chart_item<T> &comb)
 	for (auto itr = m_chart.begin(); itr != m_chart.end(); ++itr) {
 		if (itr->m_freq < comb.m_freq) {
 			m_chart.insert(itr, comb);
+			if (m_chart.size() > m_iLength)
+				m_chart.pop_back();
 			return true;
 		}
 	}
@@ -71,16 +73,14 @@ int CChart<T>::GetTotal()
 	return total;
 }
 
-
-std::string CChart<char>::GetCombinationString(const std::vector<char> &comb)
+template<typename T>
+int CChart<T>::GetCombinationString(const chart_item<T> &comb, T*& buf)
 {
-	std::string str(comb.data(), comb.size());
-	return std::move(str);
-}
+	int len = comb.m_comb.size();
+	buf = new T[len+1];
 
-std::string CChart<wchar_t>::GetCombinationString(const std::vector<wchar_t> &comb)
-{
-	std::string str;// (comb.data(), comb.size());
-	return std::move(str);
-}
+	for (int i = 0; i < len; i++)
+		buf[i] = comb.m_comb[i];
 
+	return len;
+}

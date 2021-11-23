@@ -28,7 +28,7 @@ namespace alg {
 	public:
 		CChart(char iLength) : m_iLength(iLength) {};
 
-		std::list<chart_item<T>>& GetChart() { return m_chart; }
+		std::list<chart_item<T>>& GetCombinations() { return m_chart; }
 
 		const char GetMaxLength() { return m_iLength; }
 
@@ -51,8 +51,8 @@ namespace alg {
 
 		/// converts combination of eny type into string
 		/// should be explicitly instantiate 
-		/// @return std::srting
-		std::string GetCombinationString(const std::vector<T> &comb);
+		/// @return buf length
+		int GetCombinationString(const chart_item<T> &comb, T*& buf);
 	};
 
 };

@@ -90,7 +90,7 @@ namespace alg {
 			auto itr = m_grams.find(gr);
 			if (itr == m_grams.end()) {
 				auto gram = new T[N];
-				memcpy(gram, gr, sizeof(gr));
+				memcpy(gram, gr, sizeof(T)*N);
 				m_grams[gram] = 1;
 			}
 			else
