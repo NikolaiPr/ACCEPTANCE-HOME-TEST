@@ -4,18 +4,43 @@
 
 using namespace alg;
 
-// recursive gram depth first search
-//void FindGramDFS(std::shared_ptr<CSortedCharStorage> pBaseStore, std::FILE* pFile, int iCombinationLength);
 
-void FindExpanded(std::shared_ptr<CCharChart> m_pChart, std::FILE* pFile);
+/// explicit template instantiations
+/// solve the inctance redefinition problem
+/// limits file data types to use only this
+CORE_EXTERN template class CORE_EXPORT CAlgorithm<char>;
+CORE_EXTERN template class CORE_EXPORT CAlgorithm<wchar_t>;
+
+
+// recursive gram search
+template<typename T>
+void FindExpanded(std::shared_ptr<CChart<T>> m_pChart, std::FILE* pFile);
+
+
+/// default constructor
+template<typename T>
+CAlgorithm<T>::CAlgorithm() : m_iCombinationLength(4), m_iChartLength(MAX_CHART_LEN) {
+	m_pChart = std::make_shared<CChart<T>>(m_iChartLength);
+}
+
+
+/// explicit constructor
+template<typename T>
+CAlgorithm<T>::CAlgorithm(std::string &file, int iCombinationLength = 4, int iChartLength = MAX_CHART_LEN)
+	: m_file(file), m_iCombinationLength(iCombinationLength), m_iChartLength(iChartLength) {
+
+	m_pChart = std::make_shared<CChart<T>>(iChartLength);
+}
+
 
 // main function
-err_codes CAlgorithm::Execute()
+template<typename T>
+err_codes CAlgorithm<T>::Execute()
 {
 	if (m_file.empty())
 		return err_codes::err_filename;
 
-	if (m_iCombinationLength < MIN_COMBINATION_LEN || m_iCombinationLength > MAX_COMBINATION_LEN)
+	if (m_iCombinationLength < MIN_COMBINATION_LEN)
 		return err_codes::err_comblen;
 
 	if (m_iChartLength <= 0 || m_iChartLength > MAX_CHART_LEN)
@@ -27,25 +52,25 @@ err_codes CAlgorithm::Execute()
 
 
 	try {
-		auto pBaseStore = std::make_shared<CSortedCharStorage<N_GRAM>>(m_pChart);
+		auto pBaseStore = std::make_shared<CSortedStorage<T, N_GRAM>>(m_pChart);
 		{
-			TGramParser<N_GRAM> BaseTable(pFile);
+			TGramParser<T, N_GRAM> BaseTable(pFile);
 			BaseTable.FindAllGrams();
 
 			pBaseStore->StoreTable(BaseTable.getgrams());
 
-			for (auto &vgram : pBaseStore->getgrams()) {
+			for (auto &vgram : pBaseStore->getgrams()) { // vgram.first - frequency, vgram.second - T* gram
 				for (auto gram : vgram.second) {
-					std::vector<char> full_gram;
-					for (int i = 0; i < N_GRAM; i++)
-						full_gram.push_back(gram[i]);
+					std::vector<T> full_gram;
+					for (int i = 0; i < BaseTable.getgramsize(); i++)
+						full_gram.push_back(gram[i]); // copy T* -> vector<T>
 
 					m_pChart->AddCombination({ full_gram, vgram.first });
 				}
 			}
 		}
 
-		FindExpanded(m_pChart, pFile);
+		FindExpanded(pFile);
 
 		//FindGramDFS(pBaseStore, pFile, m_iCombinationLength);
 	}
@@ -61,9 +86,9 @@ err_codes CAlgorithm::Execute()
 }
 
 
-void FindExpanded(std::shared_ptr<CCharChart> m_pChart, std::FILE* pFile)
+template<typename T>
+void CAlgorithm<T>::FindExpanded(std::FILE* pFile)
 {
-	//int iminfreq = m_pChart->GetBottomFreq();
 	auto &chart = m_pChart->GetChart();
 	for (auto itr = chart.begin(); itr != chart.end(); ++itr) {
 
@@ -72,9 +97,9 @@ void FindExpanded(std::shared_ptr<CCharChart> m_pChart, std::FILE* pFile)
 		if (comb.m_checked)
 			continue;
 
-		auto pStore = std::make_shared<CSortedCharStorage<1>>(m_pChart);
+		auto pStore = std::make_shared<CSortedStorage<T, 1>>(m_pChart);
 		{
-			TGramParser<1> SubTable(pFile);
+			TGramParser<T, 1> SubTable(pFile);
 
 			// find expanded gram part
 			SubTable.FindAllGramsAfterOne(comb.m_comb.data(), comb.m_comb.size());
@@ -83,56 +108,18 @@ void FindExpanded(std::shared_ptr<CCharChart> m_pChart, std::FILE* pFile)
 		}
 		comb.m_checked = true;
 
-		for (auto &vgram : pStore->getgrams()) {
+		for (auto &vgram : pStore->getgrams()) { // vgram.first - frequency, vgram.second - T* gram
 			for (auto gram : vgram.second) {
-				std::vector<char> full_gram(comb.m_comb);
+				std::vector<T> full_gram(comb.m_comb);
 				for (int i = 0; i < pStore->getgramsize(); i++)
-					full_gram.push_back(gram[i]);
+					full_gram.push_back(gram[i]); // copy T* -> vector<T>
 
 				m_pChart->AddCombination({ full_gram, vgram.first, false });
 				itr = chart.begin();
 			}
 		}
 		if(pStore->getgrams().size() > 0)
-			FindExpanded(m_pChart, pFile);	
+			FindExpanded(pFile);	
 	}
 }
 
-
-// recursive gram depth first search
-/*
-void FindGramDFS(std::shared_ptr<CSortedCharStorage> pBaseStore, std::FILE* pFile, int iCombinationLength)
-{
-	std::vector<char> full_basegram;
-	full_basegram.reserve(pBaseStore->GetGramLen());
-	pBaseStore->GetFullGram(full_basegram);
-
-	for (auto &vgram : pBaseStore->getgrams()) {
-		for (auto gram : vgram.second) {
-
-			std::vector<char> full_gram(full_basegram);
-			for (int i = 0; i < N_GRAM; i++)
-				full_gram.push_back(gram[i]);
-
-			if (full_gram.size() < iCombinationLength) {
-
-				TGramParser<N_GRAM> SubTable(pFile);
-				auto pSubStore = std::make_shared<CSortedCharStorage>(pBaseStore);
-
-				// gram UNcompleted -> find next gram part
-				SubTable.FindAllGramsAfterOne(full_gram.data(), full_gram.size(), iCombinationLength);
-
-				pSubStore->StoreTable(SubTable.getgrams());
-
-				// recursive down
-				FindGramDFS(pSubStore, pFile, iCombinationLength);
-			}
-			else { 
-
-				// gram completed -> add in chart
-				pBaseStore->getchart()->AddCombination({ full_gram, vgram.first });
-			}
-		}
-	}
-}
-*/

@@ -1,54 +1,40 @@
 #pragma once
-#include "core.h"
 #include "chart.h"
 #include "gramparser.h"
-#include <list>
+#include <unordered_set>
 
 namespace alg {
 
-	// sorted storage 
+	/// sorted gram storage 
+	/// fillters less than chart botton frequency grams
 	template<typename T, int N>
 	class CSortedStorage
 	{
-		// chosen type of storage has quick sort & quick acces with keys array
+		/// chosen type of storage has quick sort & quick acces with keys array
 		std::unordered_map<int, std::vector<T*>> m_Storage;
-		// array helper conteins all storage keys in decreasing order
+
+		/// array helper conteins all storage keys in decreasing order
 		std::vector<int> m_Keys;
 
-		//std::shared_ptr<CSortedStorage> m_pBase;
-		std::shared_ptr<CChart<T>> m_pChart; // gram chart
-		//T* m_pCurGram;
+		std::shared_ptr<CChart<T>> m_pChart; ///< gram chart
 
-		CSortedStorage() /*: m_pCurGram(nullptr)*/ {};
+		CSortedStorage() {}; ///< private constructor
 
 	public:
-		CSortedStorage(std::shared_ptr<CChart<T>> pChart) 
-			: /*m_pCurGram(nullptr),*/ m_pChart(pChart) {}
-		//CSortedStorage(std::shared_ptr<CSortedStorage> pBase) 
-		//	: m_pCurGram(nullptr), m_pBase(pBase), m_pChart(pBase->getchart()) {};
+		CSortedStorage(std::shared_ptr<CChart<T>> pChart) : m_pChart(pChart) {}
 
 		int getgramsize() { return N; }
 
 		std::unordered_map<int, std::vector<T*>>& getgrams() { return m_Storage; };
 
 		const std::shared_ptr<CChart<T>> getchart() { return m_pChart; };
-		//const T* getcurgram() { return m_pCurGram; };
 
-		//int GetGramLen() { return m_pBase ? m_pBase->GetGramLen() + N : N; }
 
-		////full_gram - reserved
-		//void GetFullGram(std::vector<T> &full_gram) {
-		//	if (m_pBase)
-		//		m_pBase->GetFullGram(full_gram);
-
-		//	if(m_pCurGram)
-		//		for (int i = 0; i < N; i++)
-		//			full_gram.push_back(m_pCurGram[i]);
-		//}
-
-		// create m_Storage gram freq table from m_grams stored by inclusions number
-		// [in]gram_hashtable<N> &table - hashtable
-		void StoreTable(gram_hashtable<N> &table) {
+		/// create sorted filtered gram freq table from unsorted grams hashtable
+		/// fillters less than chart botton frequency grams
+		/// frequency as table key
+		/// @param [in]gram_hashtable<T, N> &table - unsorted hashtable
+		void StoreTable(gram_hashtable<T, N> &table) {
 
 			if (table.empty())
 				return;
@@ -85,20 +71,5 @@ namespace alg {
 			// sort with descending order.
 			std::sort(m_Keys.begin(), m_Keys.end(), [&](int &a, int &b) { return a > b; });
 		}
-
-
-		//void RestoreGramFilePositions(std::FILE* pFile)
-		//{
-		//	for (auto &vgram : m_Storage) {
-		//		for (auto gram : vgram.second) {
-
-
-		//		}
-		//	}
-		//}
-
 	};
-
-	template<int N>
-	using CSortedCharStorage = CSortedStorage<char, N>;
 };
