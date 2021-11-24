@@ -30,14 +30,17 @@ std::FILE* AAlgorithm::OpenFile(bool bWrite)
 	if(bWrite)
 		file += "res";
 
+	std::FILE* pFile = nullptr;
 	switch (format) {
 	case textfile_format::ascii_file:
-		return std::fopen(file.c_str(), bWrite ? "w" : "r");
+		fopen_s(&pFile, file.c_str(), bWrite ? "w" : "r");
+		break;
 	case textfile_format::utf8_file:
-		return std::fopen(file.c_str(), bWrite ? "w, ccs = UTF-8" : "r, ccs = UTF-8");
+		fopen_s(&pFile, file.c_str(), bWrite ? "w, ccs = UTF-8" : "r, ccs = UTF-8");
+		break;
 	}
 
-	return nullptr;
+	return pFile;
 }
 
 

@@ -128,7 +128,8 @@ namespace alg{
 	/// TODO: move func on cpp, fix problem with export
 	textfile_format GetFileFormat(std::string &file)
 	{
-		std::FILE* pFile = std::fopen(file.c_str(), "rb");
+		std::FILE* pFile = nullptr;
+		fopen_s(&pFile, file.c_str(), "rb");
 		if (!pFile)
 			return textfile_format::error_file;
 

@@ -9,15 +9,16 @@ namespace alg {
 
 	// Custom functors for std::unordered_map<T*, int>
 	// Comparator functor.
-	template <int N, class _Tp, typename ...>
-	struct my_equal_to : public std::equal_to<_Tp*>
+	template <int N, class _Tp>
+	struct my_equal_to //: public std::equal_to<_Tp*>
 	{
-		bool operator()(const char* __x, const char* __y) const
+		//static_assert(N != 1 && N != 4, "N != 1 && N != 4");
+
+		bool operator()(const char* __x, const char* __y) const noexcept
 		{
 			return strncmp(__x, __y, N) == 0;
 		}
-
-		bool operator()(const wchar_t* __x, const wchar_t* __y) const
+		bool operator()(const wchar_t* __x, const wchar_t* __y) const noexcept
 		{
 			return wcsncmp(__x, __y, N) == 0;
 		}
@@ -26,9 +27,10 @@ namespace alg {
 
 	// Hash functor.
 	template <int N, class _Tp>
-	struct my_HashChar : public std::hash<_Tp>
+	struct my_HashChar //: public std::hash<_Tp>
 	{
-		size_t operator()(const char* c_str) const {
+		//static_assert(N != 1 && N != 4, "N != 1 && N != 4");
+		size_t operator()(const char* c_str) const noexcept {
 			size_t hash = 0;
 			int c = 0;
 			char* str = (char*)c_str;
@@ -38,7 +40,7 @@ namespace alg {
 			return hash;
 		}
 
-		size_t operator()(const wchar_t* c_str) const {
+		size_t operator()(const wchar_t* c_str) const noexcept {
 			size_t hash = 0;
 			int c = 0;
 			wchar_t* str = (wchar_t*)c_str;
@@ -71,7 +73,11 @@ namespace alg {
 
 		TGramParser() {}; ///< protected constructor
 	public:
-		TGramParser(std::FILE* pFile) : m_pFile(pFile) {};
+		TGramParser(std::FILE* pFile) : m_pFile(pFile) {
+			//prepare hash table
+			auto pp = (int)pow((1 << (sizeof(T) * 4)), N);
+			m_grams.reserve(pp);
+		};
 
 		~TGramParser() {
 			for (auto gr : m_grams)
@@ -91,10 +97,10 @@ namespace alg {
 			if (itr == m_grams.end()) {
 				auto gram = new T[N];
 				memcpy(gram, gr, sizeof(T)*N);
-				m_grams[gram] = 1;
+				m_grams.emplace_hint(itr, gram, 1);
 			}
 			else
-				m_grams[gr]++;
+				itr->second++;
 		};
 
 

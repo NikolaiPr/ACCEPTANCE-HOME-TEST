@@ -10,7 +10,7 @@ using namespace alg;
 
 int main(int argc, char **file_arg)
 {
-	string file = "L:\\PROEKSPERT-HOME-TEST\\core_test\\test_files\\large.txt"; //unicide_wchar2.txt
+	string file = "L:\\PROEKSPERT-HOME-TEST\\core_test\\test_files\\large8.txt";
 
 	if (argc > 1)
 		file = string(file_arg[1]);
