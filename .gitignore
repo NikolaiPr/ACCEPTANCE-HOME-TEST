@@ -39,4 +39,9 @@
 *.backup
 *.bak
 *.slb
-*.aps 
+*.aps
+.settings
+.vc
+ipch
+.db
+.opendb
