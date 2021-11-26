@@ -39,12 +39,7 @@ namespace alg {
 			if (table.empty())
 				return;
 
-			int iChartLimit = 1;
-			if (m_pChart.get() != nullptr) {
-				iChartLimit = m_pChart->GetBottomFreq();
-				if (m_pChart->IsFull()/* || iChartLimit == 0*/)
-					iChartLimit++;
-			}
+			int iChartLimit = m_pChart->GetAcceptFreq();
 
 			// use hash sorting
 			std::unordered_set<int> tmp;

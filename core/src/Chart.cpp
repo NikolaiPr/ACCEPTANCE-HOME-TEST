@@ -10,6 +10,14 @@ CORE_EXTERN template class CORE_EXPORT CChart<char>;
 CORE_EXTERN template class CORE_EXPORT CChart<wchar_t>;
 
 
+
+/// clear chart
+template<typename T>
+void CChart<T>::Clear()
+{
+	m_chart.clear();
+}
+
 /// @return bottom item frequency
 template<typename T>
 int CChart<T>::GetBottomFreq()
@@ -19,6 +27,12 @@ int CChart<T>::GetBottomFreq()
 	return m_chart.back().m_freq;
 }
 
+/// @return bottom item frequency
+template<typename T>
+int CChart<T>::GetAcceptFreq()
+{
+	return IsFull() ? GetBottomFreq() + 1 : 1;
+}
 
 /// check is list full
 template<typename T>
@@ -60,6 +74,15 @@ bool CChart<T>::AddCombination(const chart_item<T> &comb)
 	return true;
 }
 
+// force combination insert with increasing list length
+template<typename T>
+int CChart<T>::ForceInsert(const chart_item<T> &comb)
+{
+	m_chart.push_back(comb);
+	m_iLength = m_chart.size();
+	return m_iLength;
+}
+
 
 /// @return all chart items frequency sum
 template<typename T>
@@ -83,4 +106,26 @@ int CChart<T>::GetCombinationString(const chart_item<T> &comb, T*& buf)
 		buf[i] = comb.m_comb[i];
 
 	return len;
+}
+
+template<typename T>
+bool CChart<T>::operator!=(const CChart<T> &chart)
+{
+	if (m_iLength != GetMaxLength())
+		return true;
+
+	if (m_chart.size() != chart.m_chart.size())
+		return true;
+
+	auto itr = chart.m_chart.begin();
+	for (auto comb : m_chart) {
+
+		if (comb.m_freq != itr->m_freq)
+			return true;
+
+		if(!(comb.m_comb == itr->m_comb))
+			return true;
+		itr++;
+	}
+	return false;
 }

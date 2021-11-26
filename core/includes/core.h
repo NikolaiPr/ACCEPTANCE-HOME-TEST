@@ -6,6 +6,7 @@
 
 #define MIN_COMBINATION_LEN 4	/// minimum combination start length
 #define MAX_CHART_LEN 10		/// maximum chart length
+//#define MAX_COMBINATION_LEN  (MIN_COMBINATION_LEN + 10)
 
 
 namespace alg{
@@ -30,6 +31,7 @@ namespace alg{
 		err_file = -2,
 		err_comblen = -3,
 		err_chartlen = -4,
+		err_testfailed = -5,
 	};
 
 
@@ -49,7 +51,7 @@ namespace alg{
 		/// @param file full file path
 		/// @param iCombinationLength minimum combination start length
 		/// @param iChartLength	maximum chart length
-		AAlgorithm(std::string &file, int iCombinationLength = MIN_COMBINATION_LEN, int iChartLength = MAX_CHART_LEN)
+		AAlgorithm(const std::string &file, int iCombinationLength = MIN_COMBINATION_LEN, int iChartLength = MAX_CHART_LEN)
 			: m_file(file), m_iChartLength(iChartLength)/*, m_iCombinationLength(iCombinationLength)*/{}
 
 		/// open file
@@ -60,14 +62,17 @@ namespace alg{
 		/// @return error code 
 		/// @return no_err if all ok
 		/// @see err_codes
-		virtual err_codes Execute() = 0;
+		virtual err_codes Execute(bool bTestMode = false) = 0;
 
 		// print results into console
 		// suports only char type
-		virtual void PrintResults() = 0;
+		virtual void PrintResults(bool bPercentage = true) = 0;
 
 		// save results into file
 		virtual err_codes SaveResults() = 0;
+
+		// load results from file
+		virtual err_codes LoadResults(const std::string &file) = 0;
 	};
 
 
@@ -95,41 +100,44 @@ namespace alg{
 		/// @param file full file path
 		/// @param iCombinationLength minimum combination start length
 		/// @param iChartLength	maximum chart length
-		CAlgorithm(std::string &file, int iCombinationLength = MIN_COMBINATION_LEN, int iChartLength = MAX_CHART_LEN);
+		CAlgorithm(const std::string &file, int iCombinationLength = MIN_COMBINATION_LEN, int iChartLength = MAX_CHART_LEN);
 
 		const std::shared_ptr<CChart<T>>& GetChart() { return m_pChart; };
 
 		/// main algorithm function
+		/// @param bTestMode test algoritm with loaded results
 		/// @return error code 
 		/// @return no_err if all ok
 		/// @see err_codes
-		err_codes Execute() override;
+		err_codes Execute(bool bTestMode = false) override;
 
 
 		// print results into console
 		// suports only char type
-		void PrintResults() override;
+		void PrintResults(bool bPercentage = true) override;
 
 		// save results into file
 		err_codes SaveResults() override;
 
+		err_codes LoadResults(const std::string &file) override;
 
 	protected:
 		/// finds expanded combinations in file
 		/// get combination from chart, searchs in file combination len+1, 
 		/// place back in chart most frequent combination
 		/// @param pFile the same already oppened file
-		void FindExpanded(std::FILE* pFile);
+		/// @iExpCombLen combination length to expand
+		bool FindExpanded(std::FILE* pFile, int iExpCombLen);
 	};
 
 
 
 	/// get file format
 	/// TODO: move func on cpp, fix problem with export
-	textfile_format GetFileFormat(std::string &file)
+	textfile_format GetFileFormat(const std::string &file)
 	{
 		std::FILE* pFile = nullptr;
-		fopen_s(&pFile, file.c_str(), "rb");
+		fopen_s(&pFile, file.c_str(), "r");
 		if (!pFile)
 			return textfile_format::error_file;
 

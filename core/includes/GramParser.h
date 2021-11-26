@@ -1,71 +1,31 @@
 #pragma once
-#include <unordered_map>
-#include <algorithm>
+
+#include "..\includes\GramHash.h"
 #include <unordered_set>
 
 #define N_GRAM 4
 
 namespace alg {
 
-	// Custom functors for std::unordered_map<T*, int>
-	// Comparator functor.
-	template <int N, class _Tp>
-	struct my_equal_to //: public std::equal_to<_Tp*>
-	{
-		//static_assert(N != 1 && N != 4, "N != 1 && N != 4");
+	const std::unordered_set<char> separators = { ' ', '\0', '\n', '\t' };
+	const std::unordered_set<wchar_t> separators_utf8 = { L' ', L'\0', L'\n', L'\t' };
 
-		bool operator()(const char* __x, const char* __y) const noexcept
-		{
-			return strncmp(__x, __y, N) == 0;
-		}
-		bool operator()(const wchar_t* __x, const wchar_t* __y) const noexcept
-		{
-			return wcsncmp(__x, __y, N) == 0;
-		}
-	};
-
-
-	// Hash functor.
-	template <int N, class _Tp>
-	struct my_HashChar //: public std::hash<_Tp>
-	{
-		//static_assert(N != 1 && N != 4, "N != 1 && N != 4");
-		size_t operator()(const char* c_str) const noexcept {
-			size_t hash = 0;
-			int c = 0;
-			char* str = (char*)c_str;
-
-			while (c++ < N)
-				hash = *(str++) + (hash << 6) + (hash << 16) - hash;
-			return hash;
-		}
-
-		size_t operator()(const wchar_t* c_str) const noexcept {
-			size_t hash = 0;
-			int c = 0;
-			wchar_t* str = (wchar_t*)c_str;
-
-			while (c++ < N)
-				hash = *(str++) + (hash << 6) + (hash << 16) - hash;
-			return hash;
-		}
-	};
-
-
-	template<typename T, int N>
-	using gram_hashtable = std::unordered_map<T*, int, my_HashChar<N, T*>, my_equal_to<N, T*> >;
-
+	template<typename T>
+	bool IsSeparator(T) { return false; }
+	template<>
+	bool IsSeparator<char>(char ch) { return separators.find(ch) != separators.end(); }
+	template<>
+	bool IsSeparator<wchar_t>(wchar_t ch) { return separators_utf8.find(ch) != separators_utf8.end(); }
 
 	// N-gram(N-len substring) container
 	// stores all grams in container(map or hash table)
 	// gram length limited 5 because of memory limitation
 
-	template<typename T, int N>
+	template<typename T, int N = N_GRAM>
 	class TGramParser
 	{
 		static_assert(N < 6, "N should be less than 6");
 
-		const std::unordered_set<T> separators = {L' ', L'\0', L'\n', L'\t'};
 	protected:
 		gram_hashtable<T, N> m_grams;
 
@@ -73,11 +33,7 @@ namespace alg {
 
 		TGramParser() {}; ///< protected constructor
 	public:
-		TGramParser(std::FILE* pFile) : m_pFile(pFile) {
-			//prepare hash table
-			auto pp = (int)pow((1 << (sizeof(T) * 4)), N);
-			m_grams.reserve(pp);
-		};
+		TGramParser(std::FILE* pFile) : m_pFile(pFile) {};
 
 		~TGramParser() {
 			for (auto gr : m_grams)
@@ -87,7 +43,7 @@ namespace alg {
 
 		const int getgramsize() { return N; }
 
-		gram_hashtable<T, N>& getgrams() { return m_grams;	}
+		gram_hashtable<T, N>& getgrams() { return m_grams; }
 
 
 		/// add new gram in conteiner (need optimization!! with move)
@@ -110,12 +66,12 @@ namespace alg {
 		int FindAllGrams() {
 			auto buf = new T[N];
 			memset(buf, 0, sizeof(T)*N);
-			int skip = N-1;
+			int skip = N - 1;
 
 			while (readsymb(m_pFile, buf[N - 1])) {
 
 				// skip spaces
-				if (separators.find(buf[N - 1]) != separators.end()) // fseek - performance?
+				if (IsSeparator(buf[N - 1])) // fseek - performance?
 					skip = N; // find separator, skip addgram N steps
 
 				if (skip == 0) // there is no separators, can add gram
@@ -131,74 +87,12 @@ namespace alg {
 			delete[] buf;
 			return m_grams.size();
 		}
-
-
-		/// fill hashtable with suffixes after basegram
-		/// reads file again from begining, search most freq grams, hash symbols behind basegram
-		/// @param [in]gram_len basegram length
-		int FindAllGramsAfterOne(const T* basegram, int gram_len) {
-
-			std::fseek(m_pFile, 0, SEEK_SET);
-
-			T ch;
-			while (findinfile(basegram, gram_len, ch)) {
-
-				addgram(&ch);
-			}
-
-			return m_grams.size();
-		}
-
-
-		/// find N-gram gram in file
-		/// @param [in]Ngr - base gram
-		/// @param [out]ch - symbol after gram 
-		/// @return symbol found
-		bool findinfile(const T *Ngr, int gram_len, T &ch) {
-
-			auto buf = new T[gram_len];
-			memset(buf, 0, sizeof(T)*gram_len);
-
-			bool bres = false;
-
-			while (readsymb(m_pFile, buf[gram_len - 1])) {
-
-				int i = 0;
-				// compare grams
-				for (; i < gram_len; i++)
-					if (buf[i] != Ngr[i])
-						break;
-
-				// Ngr found
-				if (i == gram_len) {
-
-					fpos_t pos = 0;
-					fgetpos(m_pFile, &pos);
-
-					if (readsymb(m_pFile, ch)) {
-						if (separators.find(ch) != separators.end()) // fseek - performance?
-							break;
-
-						bres = true; // additional symbol found
-					}
-
-					fseek(m_pFile, gram_len + 1, SEEK_CUR); // move on next pos after Ngr gram starts
-					break;
-				}
-
-				// shift preview gram copy on 1 char(or T) left, add new char(or T) to gram end
-				memcpy(buf, &buf[1], sizeof(T)*(gram_len - 1));
-			}
-
-			delete[] buf;
-			return bres;
-		}
 	};
 
 
 	//template<T> 
 	//inline bool readchar(std::FILE* pFile, T);
-	inline bool readsymb(std::FILE* pFile, char &ch)	{ return (ch = (char)getc(pFile)) != EOF; }
+	inline bool readsymb(std::FILE* pFile, char &ch) { return (ch = (char)getc(pFile)) != EOF; }
 	inline bool readsymb(std::FILE* pFile, wchar_t &ch) { return (ch = (wchar_t)fgetwc(pFile)) != WEOF; }
 
 };

@@ -10,7 +10,7 @@ using namespace alg;
 
 int main(int argc, char **file_arg)
 {
-	string file = "L:\\PROEKSPERT-HOME-TEST\\core_test\\test_files\\large8.txt";
+	string file = "L:\\PROEKSPERT-HOME-TEST\\core_test\\test_files\\default.txt";
 
 	if (argc > 1)
 		file = string(file_arg[1]);
@@ -35,15 +35,18 @@ int main(int argc, char **file_arg)
 
 	if (argc > 2)
 		ChartProcessor->m_iChartLength = atoi(file_arg[2]);
-	//if (argc > 3)
-	//	ChartProcessor->m_iCombinationLength = atoi(file_arg[3]);
+
+	bool bPercentage = false;
+	if (argc > 3 && string(file_arg[3])[0] == '%')
+		bPercentage = true;
+
 
 
 	if(ChartProcessor->Execute() != err_codes::no_err)
 		return -1;
-	
 
-	ChartProcessor->PrintResults();
+
+	ChartProcessor->PrintResults(bPercentage);
 
 	ChartProcessor->SaveResults();
 
