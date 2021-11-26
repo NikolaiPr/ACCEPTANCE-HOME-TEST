@@ -1,0 +1,32 @@
+1  hasdfghasdfghasdfgh
+2  hasdfghasdfghasdfg
+3  hasdfghasdfghasdf
+4  hasdfghasdfghasd
+5  hasdfghasdfghas
+6  hasdfghasdfgha
+7  hasdfghasdfgh
+8  hasdfghasdfg
+9  hasdfghasdf
+10 hasdfghasd
+11 hasdfghas
+12 hasdfgha
+13 hasdfgh
+14 hasdfg
+15 hasdf
+16 hasd
+
+h a s d = 30
+a s d f = 27
+h a s d f = 27
+s d f g = 24
+a s d f g = 24
+h a s d f g = 24
+d f g h = 21
+s d f g h = 21
+a s d f g h = 21
+h a s d f g h = 21
+f g h a = 18
+d f g h a = 18
+g h a s = 15
+
+

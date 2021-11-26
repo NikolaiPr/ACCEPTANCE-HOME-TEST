@@ -1,0 +1,25 @@
+1  asda
+2  asdas
+3  asdasd
+4  asdasda
+5  asdasdas
+6  asdasdasd
+7  asdasdasda
+8   sdasdasdas
+9    dasdasdasd
+10    asdasdasd
+11     sdasdasd
+12      dasdasd
+13       asdasd
+14        sdasd
+15         dasd
+
+a s d a = 21
+s d a s = 21
+d a s d = 21
+s d a s d = 18
+a s d a s = 18
+a s d a s d = 15
+d a s d a = 12
+s d a s d a = 10
+a s d a s d a = 9
