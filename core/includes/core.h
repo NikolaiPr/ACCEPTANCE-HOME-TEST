@@ -5,10 +5,18 @@
 #include "..\includes\dll_exports.h"
 #include "..\includes\chart.h"
 
-#define MIN_COMBINATION_LEN 4	/// minimum combination start length
-#define MAX_CHART_LEN 10		/// maximum chart length
-//#define MAX_COMBINATION_LEN  (MIN_COMBINATION_LEN + 10)
+/// @defgroup diagrams_group Algorithm diagrams
+/// @{
+/// @image html diagram1.png "First quick chart fill with minimum length combinations in single file reading" width=600
+/// @image html diagram2.png "Fill chart with extended-length combinations in less than chart length readings" width=700
+///@}
 
+/// @defgroup def_group Algorithm defines
+/// Algorithm defines
+///@{
+#define MIN_COMBINATION_LEN 4	///< minimum combination start length
+#define MAX_CHART_LEN 10		///< maximum chart length
+///@}
 
 namespace alg{
 
@@ -108,6 +116,7 @@ namespace alg{
 		/// @param bTestMode[in] test algoritm with loaded results
 		/// @return error code 
 		/// @return no_err if all ok
+		/// @image html diagram1.png width=800
 		err_codes Execute(bool bTestMode = false) override;
 
 
@@ -126,6 +135,7 @@ namespace alg{
 		/// place back in chart most frequent combination
 		/// @param pFile the same already oppened file
 		/// @iExpCombLen combination length to expand
+		/// @image html diagram2.png width=700
 		bool FindExpanded(std::FILE* pFile, int iExpCombLen);
 	};
 

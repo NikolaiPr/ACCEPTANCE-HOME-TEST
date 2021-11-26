@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['openfile_0',['OpenFile',['../classalg_1_1_a_algorithm.html#a3123a76cb6da5913dfb10c7f3fcb9a70',1,'alg::AAlgorithm']]]
+  ['n_5fgram_0',['N_GRAM',['../group__def__group.html#gaa0c2685d8f8c4c58365d542b270f0b03',1,'GramParser.h']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tgramparser_0',['TGramParser',['../classalg_1_1_t_gram_parser.html#a9ac82b736905990a5abbc9c4385e71bc',1,'alg::TGramParser']]]
+  ['storetable_0',['StoreTable',['../classalg_1_1_c_sorted_storage.html#a6b972c47dbf621c799d9f3e36dcc78ab',1,'alg::CSortedStorage']]]
 ];

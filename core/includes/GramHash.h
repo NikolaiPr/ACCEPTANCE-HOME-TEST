@@ -32,9 +32,12 @@ namespace alg {
 	}
 
 
-	/// @struct my_equal_to
-	/// @brief Comparator functor.
+	/// @defgroup hash_functors Custom hash table functors
 	/// Custom functors for std::unordered_map<T*, int>
+
+	/// @struct my_equal_to
+	/// @ingroup hash_functors
+	/// @brief Comparator functor.
 	template <int N, class _Tp>
 	struct my_equal_to //: public std::equal_to<_Tp*>
 	{
@@ -50,35 +53,9 @@ namespace alg {
 		}
 	};
 
-	// optimization attempt
-	//template <class _Tp>
-	//struct my_equal_to<1, _Tp> //: public std::equal_to<_Tp*>
-	//{
-	//	bool operator()(const char* __x, const char* __y) const noexcept
-	//	{
-	//		return *(char*)__x == *(char*)__y;
-	//	}
-	//	bool operator()(const wchar_t* __x, const wchar_t* __y) const noexcept
-	//	{
-	//		return *(wchar_t*)__x == *(wchar_t*)__y;
-	//	}
-	//};
-
-	//template <class _Tp>
-	//struct my_equal_to<4, _Tp> //: public std::equal_to<_Tp*>
-	//{
-	//	bool operator()(const char* __x, const char* __y) const noexcept
-	//	{
-	//		return (*(int*)__x) == (*(int*)__y);
-	//	}
-	//	bool operator()(const wchar_t* __x, const wchar_t* __y) const noexcept
-	//	{
-	//		return (*(long long*)__x) == (*(long long*)__y);
-	//	}
-	//};
-
 
 	/// @struct my_HashChar
+	/// @ingroup hash_functors
 	/// @brief Custom hash functor.
 	template <int N, class _Tp>
 	struct my_HashChar //: public std::hash<_Tp>
@@ -104,21 +81,6 @@ namespace alg {
 			return hash;
 		}
 	};
-
-	// optimization attempt
-	//template <class _Tp>
-	//struct my_HashChar<4, _Tp> : public std::hash<_Tp>
-	//{
-	//	size_t operator()(const char* c_str) const noexcept {
-
-	//		return hash<unsigned int>{}(*(unsigned int*)c_str);
-	//	}
-
-	//	size_t operator()(const wchar_t* c_str) const noexcept {
-
-	//		return hash<unsigned long long>{}(*(unsigned long long*)c_str);
-	//	}
-	//};
 
 
 	/// @typedef gram_hashtable

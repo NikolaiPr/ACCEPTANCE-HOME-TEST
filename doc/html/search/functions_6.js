@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['openfile_0',['OpenFile',['../classalg_1_1_a_algorithm.html#a3123a76cb6da5913dfb10c7f3fcb9a70',1,'alg::AAlgorithm']]]
+  ['main_0',['main',['../console_8cpp.html#aa6f721d58b68eefd3b76d64f45a94114',1,'console.cpp']]]
 ];

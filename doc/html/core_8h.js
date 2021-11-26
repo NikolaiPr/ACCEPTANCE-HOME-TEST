@@ -2,6 +2,8 @@ var core_8h =
 [
     [ "alg::AAlgorithm", "classalg_1_1_a_algorithm.html", "classalg_1_1_a_algorithm" ],
     [ "alg::CAlgorithm< T >", "classalg_1_1_c_algorithm.html", "classalg_1_1_c_algorithm" ],
+    [ "MAX_CHART_LEN", "group__def__group.html#gaf2bcc13f047a3eb11b7f1c628f009d66", null ],
+    [ "MIN_COMBINATION_LEN", "group__def__group.html#gacb0a0f1670eaf5fa062c782cb8bf247f", null ],
     [ "err_codes", "core_8h.html#aa2167827510b7dcba9c84a39c2c4ebc8", [
       [ "no_err", "core_8h.html#aa2167827510b7dcba9c84a39c2c4ebc8a6e535256c3f3bd9c8d8cb685fa3234b1", null ],
       [ "err_unknown", "core_8h.html#aa2167827510b7dcba9c84a39c2c4ebc8af81b0e66b892665c825343ef6744f208", null ],

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['storetable_0',['StoreTable',['../classalg_1_1_c_sorted_storage.html#a6b972c47dbf621c799d9f3e36dcc78ab',1,'alg::CSortedStorage']]]
+  ['openfile_0',['OpenFile',['../classalg_1_1_a_algorithm.html#a3123a76cb6da5913dfb10c7f3fcb9a70',1,'alg::AAlgorithm']]]
 ];

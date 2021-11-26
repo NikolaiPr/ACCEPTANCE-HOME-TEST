@@ -4,7 +4,8 @@
 #include "..\includes\GramHash.h"
 #include <unordered_set>
 
-#define N_GRAM 4
+/// @ingroup def_group
+#define N_GRAM 4  ///< main hash table gram size
 
 namespace alg {
 

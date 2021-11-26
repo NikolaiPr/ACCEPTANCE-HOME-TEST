@@ -1,3 +1,4 @@
+/** @file  core.cpp */
 #include "..\includes\core.h"
 #include "..\includes\gramparser.h"
 #include "..\includes\sortedstorage.h"
@@ -5,18 +6,20 @@
 #include <string>
 #include <wchar.h>
 
-#define CHART_MAX_BARLEN 74
+/// @ingroup def_group
+#define CHART_MAX_BARLEN 74 ///< chart bar max length (in symbols)
 
 using namespace std;
 using namespace alg;
 
 
+/// @{
 /// explicit template instantiations
 /// solve the inctance redefinition problem
 /// limits file data types to use only this
 CORE_EXTERN template class CORE_EXPORT CAlgorithm<char>;
 CORE_EXTERN template class CORE_EXPORT CAlgorithm<wchar_t>;
-
+/// @}
 
 // open file
 std::FILE* AAlgorithm::OpenFile(bool bWrite)
