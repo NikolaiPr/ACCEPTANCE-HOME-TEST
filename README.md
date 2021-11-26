@@ -1,7 +1,7 @@
 # ACCEPTANCE HOME-TEST
 C++ DEVELOPER HOME TEST ASSIGNMENT 
 
-Main executable with arguments: ./bin/Release_x64/console.exe <file name> <chart length(optional)> <%(optional, percentage output flag)>
+Main executable with arguments: ./bin/Release_x64/console.exe "file name" "chart length(optional)" "%(optional, percentage output flag)"
 
 Test files Batch file: ./core_test/test.bat
 Test file base:        ./core_test/test_files
