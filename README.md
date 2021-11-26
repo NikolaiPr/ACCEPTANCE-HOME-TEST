@@ -11,7 +11,7 @@ Default test example: **console.exe "../../core_test/test_files/default.txt" 10 
 
 * Test files Batch file:  [./core_test/test.bat](./core_test/test.bat)
 * Test file base:         [./core_test/test_files](./core_test/test_files)
-* Unit test progect:      [./MSVSSolution/test](./MSVSSolution/test)
+* Unit test project:      [./MSVSSolution/test](./MSVSSolution/test)
 
 * Project documentation: [./doc/Index.html](./doc/Index.html) 
   
