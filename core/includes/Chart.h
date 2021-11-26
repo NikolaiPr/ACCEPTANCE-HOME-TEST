@@ -1,3 +1,4 @@
+/** @file  chart.h */
 #pragma once
 #include <list>
 #include <string>
@@ -6,7 +7,8 @@
 
 namespace alg {
 
-	/// chart inem structure template
+	/// @struct chart_item
+	/// @brief Chart item structure template
 	template<typename T>
 	struct chart_item
 	{
@@ -15,7 +17,8 @@ namespace alg {
 	};
 
 
-	/// chart class template for storing elements type of T with their frequency value
+	/// @class CChart
+	/// @brief Stores elements type of T with their frequency value.
 	template<typename T>
 	class CORE_EXPORT CChart
 	{
@@ -28,6 +31,7 @@ namespace alg {
 
 		std::list<chart_item<T>>& GetCombinations() { return m_chart; }
 
+		/// return chart max length
 		const char GetMaxLength() { return m_iLength; }
 
 		/// clear chart
@@ -46,12 +50,13 @@ namespace alg {
 		bool IsEmpty();
 
 		/// tries to add combination
-		/// @param comb new combination
+		/// @param comb[in] new combination
 		bool AddCombination(const chart_item<T> &comb);
 
-		/// force combination insert with increasing list length
+		/// Force combination insertion with increasing list length.
+		/// adds item at the end of chart
 		/// use mostly on loadresults
-		/// @param comb new combination
+		/// @param comb[in] new combination
 		int ForceInsert(const chart_item<T> &comb);
 
 		/// @return all chart items frequency sum
@@ -59,6 +64,8 @@ namespace alg {
 
 		/// converts combination of eny type into string
 		/// should be explicitly instantiate 
+		/// @param comb[in] combination
+		/// @param buf[out] combination string
 		/// @return buf length
 		int GetCombinationString(const chart_item<T> &comb, T*& buf);
 

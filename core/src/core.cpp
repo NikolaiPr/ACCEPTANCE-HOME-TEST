@@ -72,9 +72,6 @@ err_codes CAlgorithm<T>::Execute(bool bTestMode)
 	if (m_file.empty())
 		return err_codes::err_filename;
 
-	//if (m_iCombinationLength < MIN_COMBINATION_LEN)
-	//	return err_codes::err_comblen;
-
 	if (m_iChartLength <= 0 || m_iChartLength > MAX_CHART_LEN)
 		return err_codes::err_chartlen;
 
@@ -233,7 +230,6 @@ void CAlgorithm<T>::PrintResults(bool bPercentage)
 
 	// print header
 	cout << "chart max length:" << m_iChartLength << endl;
-	//cout << "min combination length:" << m_iCombinationLength << endl << endl;
 
 	// print table
 	cout << "Result table ------------------------------------------------------------------" << endl;

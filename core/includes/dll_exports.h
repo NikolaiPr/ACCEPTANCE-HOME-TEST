@@ -1,3 +1,4 @@
+/** @file  dll_exports.h */
 #pragma once
 
 #ifdef CORE_EXPORTS

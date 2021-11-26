@@ -1,3 +1,4 @@
+/** @file  gramhash.h */
 #pragma once
 #include <unordered_map>
 #include <unordered_set>
@@ -5,6 +6,7 @@
 
 namespace alg {
 
+	/// @fn inline bool gram_cmp(const _Tp* __x, const _Tp* __y, int N)
 	/// template comparision functions
 	template <class _Tp>
 	inline bool gram_cmp(const _Tp* __x, const _Tp* __y, int N) noexcept
@@ -12,6 +14,7 @@ namespace alg {
 		return false;
 	}
 
+	/// @fn inline bool gram_cmp<char>(const char* __x, const char* __y, int N)
 	/// explicit char comparision function
 	template<>
 	inline bool gram_cmp<char>(const char* __x, const char* __y, int N) noexcept
@@ -20,6 +23,7 @@ namespace alg {
 	}
 
 
+	/// @fn inline bool gram_cmp<wchar_t>(const wchar_t* __x, const wchar_t* __y, int N)
 	/// explicit wchar_t comparision function
 	template<>
 	inline bool gram_cmp<wchar_t>(const wchar_t* __x, const wchar_t* __y, int N) noexcept
@@ -28,9 +32,9 @@ namespace alg {
 	}
 
 
-
+	/// @struct my_equal_to
+	/// @brief Comparator functor.
 	/// Custom functors for std::unordered_map<T*, int>
-	/// Comparator functor.
 	template <int N, class _Tp>
 	struct my_equal_to //: public std::equal_to<_Tp*>
 	{
@@ -74,7 +78,8 @@ namespace alg {
 	//};
 
 
-	/// Hash functor.
+	/// @struct my_HashChar
+	/// @brief Custom hash functor.
 	template <int N, class _Tp>
 	struct my_HashChar //: public std::hash<_Tp>
 	{
@@ -116,7 +121,7 @@ namespace alg {
 	//};
 
 
-
+	/// @typedef gram_hashtable
 	/// main gram hash table conteiner
 	template<typename T, int N>
 	using gram_hashtable = std::unordered_map<T*, int, my_HashChar<N, T*>, my_equal_to<N, T*> >;

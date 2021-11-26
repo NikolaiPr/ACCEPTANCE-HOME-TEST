@@ -1,3 +1,4 @@
+/** @file  gramparser.h */
 #pragma once
 
 #include "..\includes\GramHash.h"
@@ -10,6 +11,8 @@ namespace alg {
 	const std::unordered_set<char> separators = { ' ', '\0', '\n', '\t' };
 	const std::unordered_set<wchar_t> separators_utf8 = { L' ', L'\0', L'\n', L'\t' };
 
+	/// @fn bool IsSeparator(T)
+	/// Function for checking separator symbols
 	template<typename T>
 	bool IsSeparator(T) { return false; }
 	template<>
@@ -17,10 +20,10 @@ namespace alg {
 	template<>
 	bool IsSeparator<wchar_t>(wchar_t ch) { return separators_utf8.find(ch) != separators_utf8.end(); }
 
-	// N-gram(N-len substring) container
-	// stores all grams in container(map or hash table)
-	// gram length limited 5 because of memory limitation
-
+	/// @class TGramParser
+	/// @brief N-gram(N-len substring) container.
+	/// stores all grams in hash table
+	/// gram length limited 5 because of memory limitation
 	template<typename T, int N = N_GRAM>
 	class TGramParser
 	{
@@ -47,7 +50,7 @@ namespace alg {
 
 
 		/// add new gram in conteiner (need optimization!! with move)
-		/// @param [in]gr - gram characters sequence
+		/// @param gr[in] - gram characters sequence
 		void addgram(T* gr) {
 			auto itr = m_grams.find(gr);
 			if (itr == m_grams.end()) {
@@ -61,7 +64,7 @@ namespace alg {
 
 
 		/// open text file, extracting all K-grams, put them in m_grams hash table
-		/// @param [in]path - text path file
+		/// @param path[in] - text path file
 		/// @return all grams count
 		int FindAllGrams() {
 			auto buf = new T[N];
@@ -90,9 +93,11 @@ namespace alg {
 	};
 
 
-	//template<T> 
-	//inline bool readchar(std::FILE* pFile, T);
+	// template<T> 
+	// inline bool readchar(std::FILE* pFile, T);
+	/// @fn bool readsymb(std::FILE* pFile, char &ch)
 	inline bool readsymb(std::FILE* pFile, char &ch) { return (ch = (char)getc(pFile)) != EOF; }
+	/// @fn bool readsymb(std::FILE* pFile, wchar_t &ch)
 	inline bool readsymb(std::FILE* pFile, wchar_t &ch) { return (ch = (wchar_t)fgetwc(pFile)) != WEOF; }
 
 };

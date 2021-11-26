@@ -1,3 +1,4 @@
+/** @file  sortedstorage.h */
 #pragma once
 #include "chart.h"
 #include "gramparser.h"
@@ -5,8 +6,9 @@
 
 namespace alg {
 
-	/// sorted gram storage 
-	/// fillters less than chart botton frequency grams
+	/// @class CSortedStorage
+	/// @brief Sorted gram storage. 
+	/// Fillters less than chart botton frequency grams
 	template<typename T, int N>
 	class CSortedStorage
 	{
@@ -33,7 +35,7 @@ namespace alg {
 		/// create sorted filtered gram freq table from unsorted grams hashtable
 		/// fillters less than chart botton frequency grams
 		/// frequency as table key
-		/// @param [in]gram_hashtable<T, N> &table - unsorted hashtable
+		/// @param table[in] - unsorted hashtable
 		void StoreTable(gram_hashtable<T, N> &table) {
 
 			if (table.empty())

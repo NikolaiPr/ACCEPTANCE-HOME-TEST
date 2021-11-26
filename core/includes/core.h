@@ -1,3 +1,4 @@
+/** @file  core.h */
 #pragma once
 #include <string>
 #include <memory>
@@ -11,7 +12,8 @@
 
 namespace alg{
 
-	/// file formats and result code
+	/// @enum textfile_format 
+	/// File formats and result code
 	enum textfile_format {
 		ascii_file = 0,
 		error_file = -1,
@@ -22,8 +24,8 @@ namespace alg{
 		utf32_file = 0xfffe0000//0x0000feff,
 	};
 
-	/// return codes for main Execute function
-	/// @see Execute()
+	/// @enum err_codes 
+	/// Return codes for main Execute() function
 	enum class err_codes {
 		no_err = 1,
 		err_unknown = 0,
@@ -35,33 +37,32 @@ namespace alg{
 	};
 
 
-	// base algorithm class to separate working with templates
+	/// @class AAlgorithm
+	/// @brief Base algorithm class to separate working with templates
 	class CORE_EXPORT AAlgorithm
 	{
 	public:
 		std::string m_file;						///< file name
-		//int m_iCombinationLength;				///< minimal start combination length
 		int m_iChartLength;						///< chart length
 
 	public:
 		/// default constructor
-		AAlgorithm() : m_iChartLength(MAX_CHART_LEN)/*, m_iCombinationLength(4)*/ {};
+		AAlgorithm() : m_iChartLength(MAX_CHART_LEN) {};
 
 		/// explicit constructor
-		/// @param file full file path
-		/// @param iCombinationLength minimum combination start length
-		/// @param iChartLength	maximum chart length
+		/// @param file[in] full file path
+		/// @param iCombinationLength[in] minimum combination start length
+		/// @param iChartLength[in]	maximum chart length
 		AAlgorithm(const std::string &file, int iCombinationLength = MIN_COMBINATION_LEN, int iChartLength = MAX_CHART_LEN)
-			: m_file(file), m_iChartLength(iChartLength)/*, m_iCombinationLength(iCombinationLength)*/{}
+			: m_file(file), m_iChartLength(iChartLength){}
 
 		/// open file
-		/// @param bWrite write mode, else read mode
+		/// @param[in] bWrite write mode, else read mode
 		std::FILE* OpenFile(bool bWrite);
 
 		/// main algorithm function
 		/// @return error code 
 		/// @return no_err if all ok
-		/// @see err_codes
 		virtual err_codes Execute(bool bTestMode = false) = 0;
 
 		// print results into console
@@ -77,15 +78,14 @@ namespace alg{
 
 
 
-	/// CAlgorithm class.
+	/// @class CAlgorithm
+	/// @brief Type specified algorithm class to separate working with templates.
 	/// Uses any text file with random content as an input, and checks all the words contained 
 	/// in such text file for letter combinations consisting of more than 3 letters.
 	/// output will consist of up to 10 most common letter combinations and their difference 
 	/// in percentage displayed as a table and a bar chart
-
-	// @param T internal data type(tested type - char, wchat_t)
+	/// @param T internal data type(tested type - char, wchat_t)
 	// TODO: type variants: char8_t, char16_t, char32_t
-
 	template<typename T>
 	class CAlgorithm : public AAlgorithm
 	{
@@ -97,18 +97,17 @@ namespace alg{
 		CAlgorithm();
 
 		/// explicit constructor
-		/// @param file full file path
-		/// @param iCombinationLength minimum combination start length
-		/// @param iChartLength	maximum chart length
+		/// @param file[in] full file path
+		/// @param iCombinationLength[in] minimum combination start length
+		/// @param iChartLength[in]	maximum chart length
 		CAlgorithm(const std::string &file, int iCombinationLength = MIN_COMBINATION_LEN, int iChartLength = MAX_CHART_LEN);
 
 		const std::shared_ptr<CChart<T>>& GetChart() { return m_pChart; };
 
 		/// main algorithm function
-		/// @param bTestMode test algoritm with loaded results
+		/// @param bTestMode[in] test algoritm with loaded results
 		/// @return error code 
 		/// @return no_err if all ok
-		/// @see err_codes
 		err_codes Execute(bool bTestMode = false) override;
 
 
@@ -132,8 +131,11 @@ namespace alg{
 
 
 
-	/// get file format
-	/// TODO: move func on cpp, fix problem with export
+	/// @fn textfile_format GetFileFormat(const std::string &file)
+	/// Get file format. 
+	/// @param file file path
+	/// @return textfile_format file format
+	// TODO: move func on cpp, fix problem with export
 	textfile_format GetFileFormat(const std::string &file)
 	{
 		std::FILE* pFile = nullptr;

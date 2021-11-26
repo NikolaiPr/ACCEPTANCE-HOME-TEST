@@ -10,7 +10,7 @@ using namespace alg;
 
 int main(int argc, char **file_arg)
 {
-	string file = "L:\\PROEKSPERT-HOME-TEST\\core_test\\test_files\\default.txt";
+	string file;
 
 	if (argc > 1)
 		file = string(file_arg[1]);
@@ -21,14 +21,14 @@ int main(int argc, char **file_arg)
 	}
 
 
-	shared_ptr<AAlgorithm> ChartProcessor;
+	unique_ptr<AAlgorithm> ChartProcessor;
 
 	switch (format) {
 	case textfile_format::ascii_file:
-		ChartProcessor = make_shared<CAlgorithm<char>>(file);
+		ChartProcessor = make_unique<CAlgorithm<char>>(file);
 		break;
 	case textfile_format::utf8_file:
-		ChartProcessor = make_shared<CAlgorithm<wchar_t>>(file);
+		ChartProcessor = make_unique<CAlgorithm<wchar_t>>(file);
 		break;
 	}
 
@@ -37,7 +37,7 @@ int main(int argc, char **file_arg)
 		ChartProcessor->m_iChartLength = atoi(file_arg[2]);
 
 	bool bPercentage = false;
-	if (argc > 3 && string(file_arg[3])[0] == '%')
+	if (argc > 3 && (file_arg[3][0] == '%'))
 		bPercentage = true;
 
 
